@@ -4,7 +4,11 @@
 
 This is the repository for Buildnumber, `bn` program.
 
-It manages your version number via a number of different mechanisms.
+It manages your version number using semanitic versioning (major.minor.revision), via  `Buildnumber` file.  
+
+Perhaps invoke it from your `Makefile` before you publish your code and you have a standard way of managing your versions.
+
+## Usage
 
 You can call it directly, for example
 
@@ -12,21 +16,19 @@ You can call it directly, for example
 bn command (-f FILENAME)
 ```
 
-## Usage
-
-### Get the current
+### Get the current version
 
 ```bash
 bn get
 ```
 
-### Upgrade the revision.
+### Upgrade the revision
 
 ```bash
 bn revision
 ```
 
-### Upgrade the minor version (will reset revision to 0)
+### Upgrade the minor (will reset revision to 0)
 
 ```bash
 bn minor
