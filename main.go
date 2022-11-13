@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	git "github.com/go-git/go-git/v5" // with go modules enabled (GO111MODULE=on or outside GOPATH)
 	cli "github.com/simonski/cli"
 )
 
@@ -41,6 +42,9 @@ func main() {
 		UpgradeRevision(cli)
 	} else if command == COMMAND_HELP || command == "" {
 		Help(cli)
+	} else if command == COMMAND_GIT {
+		fmt.Println(GitInfo(cli))
+
 	} else {
 		fmt.Printf("Error, '%v' not found.\n", command)
 		os.Exit(1)
@@ -81,4 +85,17 @@ func Init(c *cli.CLI) {
 
 func Help(c *cli.CLI) {
 	fmt.Print(USAGE)
+}
+
+func GitInfo(c *cli.CLI) string {
+	dir := c.GetStringOrDefault("-dir", ".")
+	repo, err := git.PlainOpen(dir)
+	if err != nil {
+		return ""
+	}
+	h, err := repo.Head()
+	if err != nil {
+		panic(err)
+	}
+	return h.String()
 }
