@@ -14,7 +14,6 @@ const USAGE = `
 Usage: bn <command> <options>
 
 Commands
-
 	get                             - returns the version
 	init                            - initialises a Buildnumber file
 	major                           - upgrades the major version

@@ -8,23 +8,6 @@ import (
 	cli "github.com/simonski/cli"
 )
 
-var VALID_COMMANDS = [...]string{
-	COMMAND_INIT,
-	COMMAND_GET,
-	COMMAND_UPGRADE_MAJOR,
-	COMMAND_UPGRADE_MINOR,
-	COMMAND_UPGRADE_REVISION,
-}
-
-func IsValidCommand(command string) bool {
-	for _, e := range VALID_COMMANDS {
-		if e == command {
-			return true
-		}
-	}
-	return false
-}
-
 func main() {
 	cli := cli.New(os.Args)
 	cli.Shift()
@@ -79,7 +62,9 @@ func UpgradeRevision(c *cli.CLI) {
 }
 
 func Init(c *cli.CLI) {
-	version := Load(c)
+	filename := c.GetStringOrDefault("-file", DEFAULT_BUILDFILE)
+	version := NewFromFile(filename)
+	// version := Load(c)
 	version.Save(version.Filename)
 }
 
