@@ -62,7 +62,12 @@ func UpgradeRevision(c *cli.CLI) {
 }
 
 func Init(c *cli.CLI) {
-	filename := c.GetStringOrDefault("-file", DEFAULT_BUILDFILE)
+	filename, err := GetFilename(c)
+	if err != nil {
+		fmt.Print(err)
+		os.Exit(1)
+	}
+
 	version := NewFromFile(filename)
 	// version := Load(c)
 	version.Save(version.Filename)

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -123,20 +124,42 @@ func Findfile(filename string, VERBOSE bool) string {
 
 		}
 	}
-	fullpath := fmt.Sprintf("%v/%v", path, filename)
-	fmt.Println(fullpath)
+}
 
-	// if goutils.FileExists(filename) {
-	return filename
-
-	// }
-	// return ""
+func GetFilename(c *cli.CLI) (string, error) {
+	VERBOSE := c.Contains("-v")
+	value := c.GetStringOrDefault("-f", "")
+	if value == "" {
+		value = c.GetStringOrDefault("-file", "")
+	}
+	if value == "" {
+		value = os.Getenv(ENV_BUILDFILE)
+		fmt.Printf("ENV value %v is %v\n", ENV_BUILDFILE, value)
+	}
+	if value == "" {
+		evalue := os.Getenv(ENV_BUILDFILE)
+		fmt.Printf("ENV value %v is %v\n", ENV_BUILDFILE, evalue)
+		value = evalue
+	}
+	if value == "" {
+		value = DEFAULT_BUILDFILE
+	}
+	filename := Findfile(value, VERBOSE)
+	info, _ := os.Stat(filename)
+	if info.IsDir() {
+		return "", errors.New(value + " is a directory.")
+	} else {
+		return filename, nil
+	}
 
 }
 
 func Load(c *cli.CLI) *Version {
-	VERBOSE := c.Contains("-v")
-	filename := Findfile(c.GetFileExistsOrDefault("-f", DEFAULT_BUILDFILE), VERBOSE)
+	filename, err := GetFilename(c)
+	if err != nil {
+		fmt.Print(err)
+		os.Exit(1)
+	}
 	return NewFromFile(filename)
 }
 
