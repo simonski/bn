@@ -134,12 +134,9 @@ func GetFilename(c *cli.CLI) (string, error) {
 	}
 	if value == "" {
 		value = os.Getenv(ENV_BUILDFILE)
-		fmt.Printf("ENV value %v is %v\n", ENV_BUILDFILE, value)
-	}
-	if value == "" {
-		evalue := os.Getenv(ENV_BUILDFILE)
-		fmt.Printf("ENV value %v is %v\n", ENV_BUILDFILE, evalue)
-		value = evalue
+		if c.IS_VERBOSE {
+			fmt.Printf("ENV value %v is %v\n", ENV_BUILDFILE, value)
+		}
 	}
 	if value == "" {
 		value = DEFAULT_BUILDFILE
