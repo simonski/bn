@@ -21,6 +21,7 @@ setup:
 
 build:
 	staticcheck ./...
+	bn revision
 	go fmt .
 	go build
 

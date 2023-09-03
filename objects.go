@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -68,8 +69,8 @@ func NewFromFile(filename string) *Version {
 // Findfile looks in the current directory then "walks" upwards
 // until it either finds a file matching the name or stops at $HOME
 // If a file is not found, filename is returned as-is
-func Findfile(filename string, VERBOSE bool) string {
-	// } else {
+func Findfile(original_filename string, VERBOSE bool) string {
+	working_filename := original_filename
 	home := os.Getenv("HOME")
 	if VERBOSE {
 		fmt.Printf("Home=%v\n", home)
@@ -81,7 +82,7 @@ func Findfile(filename string, VERBOSE bool) string {
 
 	new_path := path
 	for {
-		candidate := new_path + "/" + filename
+		candidate := new_path + "/" + working_filename
 		if goutils.FileExists(candidate) {
 			if VERBOSE {
 				fmt.Printf("candidate : %v [EXIST!]\n", candidate)
@@ -94,12 +95,12 @@ func Findfile(filename string, VERBOSE bool) string {
 
 		if new_path == home {
 			if VERBOSE {
-				fmt.Println("new_path == home, returning original")
+				fmt.Printf("new_path == home, returning original value `%v`\n", original_filename)
 			}
-			return filename
+			return working_filename
 		} else {
 			if VERBOSE {
-				fmt.Println("new_path != home")
+				fmt.Println("new_path != home, continuing to walk up")
 			}
 			// take a directory off the path and put the fileame on
 			splits := strings.Split(new_path, "/")
@@ -114,11 +115,14 @@ func Findfile(filename string, VERBOSE bool) string {
 			if VERBOSE {
 				fmt.Printf("new_path  : %v\n", new_path)
 			}
-			candidate = new_path + "/" + filename
+			candidate = new_path + "/" + working_filename
 			if VERBOSE {
 				fmt.Printf("candidate : %v\n", candidate)
 			}
 			if goutils.FileExists(candidate) {
+				if VERBOSE {
+					fmt.Printf("candidate exists, reeturing : %v\n", candidate)
+				}
 				return candidate
 			}
 
@@ -142,9 +146,15 @@ func GetFilename(c *cli.CLI) (string, error) {
 		value = DEFAULT_BUILDFILE
 	}
 	filename := Findfile(value, VERBOSE)
-	info, _ := os.Stat(filename)
-	if info.IsDir() {
-		return "", errors.New(value + " is a directory.")
+	if c.IS_VERBOSE {
+		log.Printf("original filename suggested is '%v'\n", value)
+		log.Printf("filename found is '%v'\n", filename)
+	}
+	info, patherr := os.Stat(filename)
+	if patherr != nil {
+		return filename, nil
+	} else if info.IsDir() {
+		return filename, errors.New("Directory")
 	} else {
 		return filename, nil
 	}
@@ -153,8 +163,12 @@ func GetFilename(c *cli.CLI) (string, error) {
 
 func Load(c *cli.CLI) *Version {
 	filename, err := GetFilename(c)
+	if filename == "" {
+		fmt.Println("Error, cannot find a Buildnumber file.  Try initialising with `bn init`")
+		os.Exit(1)
+	}
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
 	return NewFromFile(filename)

@@ -1,12 +1,18 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"os"
+	"strings"
 
 	git "github.com/go-git/go-git/v5" // with go modules enabled (GO111MODULE=on or outside GOPATH)
 	cli "github.com/simonski/cli"
+	"github.com/simonski/goutils"
 )
+
+//go:embed Buildnumber
+var Buildnumber embed.FS
 
 func main() {
 	cli := cli.New(os.Args)
@@ -21,10 +27,14 @@ func main() {
 		UpgradeMajor(cli)
 	} else if command == COMMAND_UPGRADE_MINOR {
 		UpgradeMinor(cli)
+	} else if command == COMMAND_VERSION {
+		MyVersion()
 	} else if command == COMMAND_UPGRADE_REVISION {
 		UpgradeRevision(cli)
 	} else if command == COMMAND_HELP || command == "" {
 		Help(cli)
+	} else if command == COMMAND_HELP_GO {
+		HelpGo(cli)
 	} else if command == COMMAND_GIT {
 		fmt.Println(GitInfo(cli))
 
@@ -63,6 +73,10 @@ func UpgradeRevision(c *cli.CLI) {
 
 func Init(c *cli.CLI) {
 	filename, err := GetFilename(c)
+	if goutils.FileExists(filename) {
+		fmt.Printf("File `%v` already exists, cannot init.\n", filename)
+		os.Exit(1)
+	}
 	if err != nil {
 		fmt.Print(err)
 		os.Exit(1)
@@ -71,10 +85,15 @@ func Init(c *cli.CLI) {
 	version := NewFromFile(filename)
 	// version := Load(c)
 	version.Save(version.Filename)
+	fmt.Printf("Initialised `%v` successfully.\n", filename)
 }
 
 func Help(c *cli.CLI) {
 	fmt.Print(USAGE)
+}
+
+func HelpGo(c *cli.CLI) {
+	fmt.Print(USAGE_HELP_GO)
 }
 
 func GitInfo(c *cli.CLI) string {
@@ -88,4 +107,11 @@ func GitInfo(c *cli.CLI) string {
 		panic(err)
 	}
 	return h.String()
+}
+
+func MyVersion() {
+	data, _ := Buildnumber.ReadFile("Buildnumber")
+	v := string(data)
+	v = strings.ReplaceAll(v, "\n", "")
+	fmt.Println(v)
 }

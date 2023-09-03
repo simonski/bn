@@ -16,6 +16,14 @@ You can call it directly, for example
 bn command (-f FILENAME)
 ```
 
+### Initialise the current directory as your buildnumber dir
+
+```bash
+bn init
+```
+
+A `Buildnumber` file will be created.  This is the file that will store the version and be modified by the `bn` command from now on.
+
 ### Get the current version
 
 ```bash
@@ -39,3 +47,11 @@ bn minor
 ```bash
 bn major
 ```
+
+### Integration and automation
+
+Now your program has a `Buildnumber` file, you can integrate the buildnumber into your CI/CD and client as you see fit.  
+
+To see an example of integrating with go programs, try `bn help-go`
+
+

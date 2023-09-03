@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/simonski/cli v0.0.0-20220919133012-ba6c528d0d37
-	github.com/simonski/goutils v0.0.0-20220804183810-521696e55aa5
+	github.com/simonski/goutils v0.0.0-20230903103029-7a7712f9a9d2
 )
 
 require (
