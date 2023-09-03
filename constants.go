@@ -6,7 +6,7 @@ const COMMAND_GIT = "git"
 const COMMAND_GET = "get"
 const COMMAND_INIT = "init"
 const COMMAND_UPGRADE_MAJOR = "major"
-const COMMAND_VERSION = "version"
+const COMMAND_BN_VERSION = "bn-version"
 const COMMAND_UPGRADE_MINOR = "minor"
 const COMMAND_UPGRADE_REVISION = "revision"
 const COMMAND_HELP = "help"
@@ -25,7 +25,7 @@ Commands
 	git                             - returns the git hash/branch
 
 	help-go                         - how to integrate with a go program
-	version                         - displays the INTERNAL bn version 
+	bn-version                         - displays the INTERNAL bn version 
 
 `
 

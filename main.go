@@ -27,7 +27,7 @@ func main() {
 		UpgradeMajor(cli)
 	} else if command == COMMAND_UPGRADE_MINOR {
 		UpgradeMinor(cli)
-	} else if command == COMMAND_VERSION {
+	} else if command == COMMAND_BN_VERSION {
 		MyVersion()
 	} else if command == COMMAND_UPGRADE_REVISION {
 		UpgradeRevision(cli)
