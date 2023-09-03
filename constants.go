@@ -25,7 +25,7 @@ Commands
 	git                             - returns the git hash/branch
 
 	help-go                         - how to integrate with a go program
-	bn-version                         - displays the INTERNAL bn version 
+	bn-version                      - displays the INTERNAL bn version 
 
 `
 
